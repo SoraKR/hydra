@@ -65,11 +65,28 @@ let rec height : hydra -> int = fun h ->
     Node []->0
   |Node(t::q)->if 1+height (Node [t])>1+height (Node q) then 1+height (Node [t]) else 1+height (Node q)
 
+(*fonction histo_lvl qui calcule le nombre de noeuds d'un niveau*)
+let rec histo_lvl : hydra -> int = fun h ->
+  match h with
+    Node []->0
+  |Node(t::q)->1+(histo_lvl (Node (q)))
+(*fonction apply_son applique une fonction f à chaque hydre de la hydra list *)
+let rec apply_son : hydra->(hydra->int list)->int list =fun h f ->
+  match h with
+    Node []->[]
+  |Node(t::q)->(f (Node([t])))@(apply_son(Node(q)) f)
 (* Écrire une fonction qui calcule l'histogramme d'une hydre, nombre de noeuds à chaque niveau *)
 
-let histogram : hydra -> int list = fun h ->
-  failwith "A écrire"
+let rec histogram : hydra -> int list = fun h ->
+  match h with
+    Node []->[]
+  |Node(t::q)->(1+(histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram)
 
+(*get_head retourne 1 si on a une tête*)
+let get_head :hydra ->int = fun h->
+  match h with
+    Node []->1
+  |_->0
 (* Écrire une fonction qui compte le nombre de têtes à chaque niveau. *)
 let histogram_heads : hydra -> int list = fun h ->
   failwith "A écrire"
