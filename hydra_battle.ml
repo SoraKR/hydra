@@ -55,11 +55,15 @@ let example_deep_two_copies =
 
 (* Écrire une fonction donnant la taille d'une hydre (nombre total de noeuds) *)
 let rec size : hydra -> int = fun h ->
-  failwith "A écrire"
+  match h with
+    Node []->0
+  |Node(t::q)->1+(size (Node[t]))+(size (Node(q)))
 
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
 let rec height : hydra -> int = fun h ->
-  failwith "A écrire"
+  match h with
+    Node []->0
+  |Node(t::q)->if 1+height (Node [t])>1+height (Node q) then 1+height (Node [t]) else 1+height (Node q)
 
 (* Écrire une fonction qui calcule l'histogramme d'une hydre, nombre de noeuds à chaque niveau *)
 
