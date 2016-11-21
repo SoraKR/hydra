@@ -65,10 +65,10 @@ let _ = size  another_hydra
     
 let rec height : hydra -> int = fun h ->
   match h with
-    Node [] -> 0
-  |Node(t::q) -> 1 + max (height t) (height (Node(q)))
+    Node [] -> 1
+  |Node(t::q) -> if q = [] then 1 + (height t) else max (height t) (height (Node(q)))
                       
-let _ = height my_hydra
+let _ = height small_hydra
           
 
 (*fxonction histo_lvl qui calcule le nombre de noeuds d'un niveau*)
