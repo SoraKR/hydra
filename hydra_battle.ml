@@ -96,7 +96,7 @@ let histogram_heads : hydra -> int list = fun h ->
    les contraintes décrites dans le sujet.
 *)
 let hydra_edges : hydra -> (int * int) list = fun h ->
-  failwith "A écrire"
+  failwith "A écrire  "
 
 (*
    Affiche une hydre h.
