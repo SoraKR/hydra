@@ -59,19 +59,19 @@ let rec size : hydra -> int = fun h ->
     Node [] -> 0
   |Node (t::q) ->  1 + size t + size (Node(q)) 
                                                                           
-let _ = size  another_hydra         
+let _ = size  my_hydra         
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
-let max a b = if a < b then b else a
+
     
 let rec height : hydra -> int = fun h ->
   match h with
     Node [] -> 0
-  |Node(t::q) -> 1 + (height (Node(q)))
+  |Node(t::q) -> 1 + max (height t) (height (Node(q)))
                       
-let _ = height another_hydra
+let _ = height my_hydra
           
 
-(*fonction histo_lvl qui calcule le nombre de noeuds d'un niveau*)
+(*fxonction histo_lvl qui calcule le nombre de noeuds d'un niveau*)
 let rec histo_lvl : hydra -> int = fun h ->
   match h with
     Node []->0
