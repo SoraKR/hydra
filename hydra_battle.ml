@@ -57,7 +57,8 @@ let example_deep_two_copies =
 let rec size : hydra -> int = fun h ->
   match h with
     Node []->0
-  |Node(t::q)->1+(size (Node[t]))+(size (Node(q)))
+  |Node(t::q)-> 1+(size (Node[t]))+(size (Node(q)))
+         
 
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
 let rec height : hydra -> int = fun h ->
@@ -91,8 +92,8 @@ let get_head :hydra ->int = fun h->
 let rec histogram_heads : hydra -> int list = fun h ->
    match h with
     Node []->[]
-    |Node(t::q)->if get_head h = 0 then ((histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram) else (1+(histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram);;
-                                                                                                                                                            
+    |Node(t::q)->if get_head h = 0 then ((histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram) else (1+(histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram)
+
 (*
    Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec 
    les contraintes décrites dans le sujet.
