@@ -56,10 +56,10 @@ let example_deep_two_copies =
 (* Écrire une fonction donnant la taille d'une hydre (nombre total de noeuds) *)
 let rec size : hydra -> int = fun h ->
   match h with
-    Node []->0
-  |Node(t::q)-> 1 +(size (Node(q)))
-         
-let _= size very_small_hydra
+    Node [] -> 0
+  |Node (t::q) ->  1 + size (Node(q)) + size t 
+                                                                          
+let _ = size  small_hydra         
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
 let rec height : hydra -> int = fun h ->
   match h with
