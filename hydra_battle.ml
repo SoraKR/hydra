@@ -57,14 +57,19 @@ let example_deep_two_copies =
 let rec size : hydra -> int = fun h ->
   match h with
     Node [] -> 0
-  |Node (t::q) ->  1 + size (Node(q)) + size t 
+  |Node (t::q) ->  1 + size t + size (Node(q)) 
                                                                           
-let _ = size  small_hydra         
+let _ = size  another_hydra         
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
+let max a b = if a < b then b else a
+    
 let rec height : hydra -> int = fun h ->
   match h with
-    Node []->0
-  |Node(t::q)->if 1+height (Node [t])>1+height (Node q) then 1+height (Node [t]) else 1+height (Node q)
+    Node [] -> 0
+  |Node(t::q) -> 1 + (height (Node(q)))
+                      
+let _ = height another_hydra
+          
 
 (*fonction histo_lvl qui calcule le nombre de noeuds d'un niveau*)
 let rec histo_lvl : hydra -> int = fun h ->
@@ -81,19 +86,18 @@ let rec apply_son : hydra->(hydra->int list)->int list =fun h f ->
 let rec histogram : hydra -> int list = fun h ->
   match h with
     Node []->[]
-  |Node(t::q)->(1+(histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram)
-
+  |Node(t::q)->(1+(histo_lvl (Node q)))::(histogram t)@(apply_son (Node(q)) histogram)
+let _ =histogram my_hydra
 (*get_head retourne 1 si on a une tête*)
 let get_head :hydra ->int = fun h->
   match h with
     Node []->1
   |_->0
 (* Écrire une fonction qui compte le nombre de têtes à chaque niveau. *)
-let rec histogram_heads : hydra -> int list = fun h ->
-   match h with
-    Node []->[]
-    |Node(t::q)->if get_head h = 0 then ((histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram) else (1+(histo_lvl (Node q)))::(histogram (Node([t])))@(apply_son (Node(q)) histogram)
-
+let  histogram_heads : hydra -> int list = fun h ->
+  
+      
+let _ = histogram_heads my_hydra
 (*
    Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec 
    les contraintes décrites dans le sujet.
