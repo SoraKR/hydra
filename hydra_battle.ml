@@ -93,8 +93,18 @@ let get_head :hydra ->int = fun h->
   match h with
     Node []->1
   |_->0
+
+(*fonction apply_to_list qui applique f (hydra->int) à tous les élements d'une hydra list et retourne la somme des f de la liste*)
+let rec apply_to_list f h=
+  match h with
+    Node []->0
+  |Node (t::q)->(f t)+(apply_to_list f (Node(q)))
+     
 (* Écrire une fonction qui compte le nombre de têtes à chaque niveau. *)
-let  histogram_heads : hydra -> int list = fun h ->
+let rec  histogram_heads : hydra -> int list = fun h ->
+  match h with
+    Node []->[]
+  |Node(t::q)->(get_head t+(apply_to_list (get_head) (Node(q))))::(apply_son t histogram_heads)@(apply_son (Node(q)) histogram_heads)
   
       
 let _ = histogram_heads my_hydra
