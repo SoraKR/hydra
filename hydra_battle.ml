@@ -76,11 +76,11 @@ let rec histo_lvl : hydra -> int = fun h ->
   match h with
     Node []->0
   |Node(t::q)->1+(histo_lvl (Node (q)))
-(*fonction apply_son applique une fonction f à chaque hydre de la hydra list *)
+(*fonction apply_son applique une fonction f à chaque hydre de la hydra list et retourne une liste des éléments modifiés par f *)
 let rec apply_son : hydra->(hydra->int list)->int list =fun h f ->
   match h with
     Node []->[]
-  |Node(t::q)->(f (Node([t])))@(apply_son(Node(q)) f)
+  |Node(t::q)->(f t)@(apply_son(Node(q)) f)
 (* Écrire une fonction qui calcule l'histogramme d'une hydre, nombre de noeuds à chaque niveau *)
 
 let rec histogram : hydra -> int list = fun h ->
@@ -94,7 +94,7 @@ let get_head :hydra ->int = fun h->
     Node []->1
   |_->0
 
-(*fonction apply_to_list qui applique f (hydra->int) à tous les élements d'une hydra list et retourne la somme des f de la liste*)
+(*fonction apply_to_list qui applique f (hydra->int) à tous les élements d'une hydra list et retourne la somme des éléments de la liste*)
 let rec apply_to_list f h=
   match h with
     Node []->0
@@ -112,6 +112,11 @@ let _ = histogram_heads my_hydra
    Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec 
    les contraintes décrites dans le sujet.
 *)
+(*ma version de hydra edges avec histogram : à partir de la int list d'histogram on crée une liste (int*int).n est le nombre de noeuds dans le niveau actuel k servira d'incrémentateur pour les étages et sera réinitialisé à chaque montée et o sera la situation de départ (où o=k à chaque nouveau niveau)*)
+let rec my_hydra_edges il n k o  :int list->int->int->(int*int) list=
+  failwith "A écrire"
+
+    
 let hydra_edges : hydra -> (int * int) list = fun h ->
   failwith "A écrire  "
 
