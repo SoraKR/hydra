@@ -61,7 +61,7 @@ let rec size : hydra -> int = fun h ->
    Node [] -> 1
   |Node (t::q) -> if q = [] then  1 + size t else  size t + size (Node(q)) 
                                                                           
-let _ = size  another_hydra         
+let _ = size  my_h         
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
 
     
@@ -73,7 +73,10 @@ let rec height : hydra -> int = fun h ->
 let _ = height small_hydra
   let _=height my_h
           
-
+(*retourn une liste*)
+  let rec reverse l acc=match l with
+      []->acc
+    |t::q->reverse q (t::acc)
 (*fxonction histo_lvl qui calcule le nombre de noeuds d'un niveau*)
 let rec histo_lvl : hydra -> int = fun h ->
   match h with
@@ -86,39 +89,34 @@ let rec apply_son : hydra->(hydra->int list)->int list =fun h f ->
   |Node(t::q)->(f t)@(apply_son(Node(q)) f)
 (* Écrire une fonction qui calcule l'histogramme d'une hydre, nombre de noeuds à chaque niveau *)
 
-let rec histogram : hydra -> int list = fun h ->
-  match h with
-    Node []->[]
-  |Node(t::q)->(1+(histo_lvl (Node q)))::(histogram t)@(apply_son (Node(q)) histogram)
-let _ =histogram my_hydra
-let _=histogram my_h
+
+
+let rec find_stage i n h f=match h with
+    Node[]->0
+  |Node(t::q)->if i=n then (f (Node(t::q))) else find_stage (i+1) n t f+find_stage i n (Node q) f
+let _ =find_stage 0 0 my_h histo_lvl
+
+let rec histo_aux :hydra->int->int->int list=fun h i j->if i=j then find_stage i j h histo_lvl::[] else find_stage (i) j h histo_lvl::histo_aux h (i+1) j
+  
+let histogramme:hydra ->int list=fun h-> reverse(histo_aux h 0 ((height h)-1)) []    
 (*get_head retourne 1 si on a une tête*)
+let _=histogramme my_h
+
 let get_head :hydra ->int = fun h->
   match h with
     Node []->1
   |_->0
-
-(*fonction apply_to_list qui applique f (hydra->int) à tous les élements d'une hydra list et retourne la somme des éléments de la liste*)
-let rec apply_to_list f h=
+let rec get_head_lvl:hydra->int=fun h->
   match h with
-    Node []->0
-  |Node (t::q)->(f t)+(apply_to_list f (Node(q)))
+    Node[]->0
+  |Node(t::q)->get_head t+get_head_lvl (Node q)
 
-let rec apply_to_son f h=
-  match h with
-    Node []->0
-  |Node (t::q)->(apply_to_son f t)+(apply_to_list f (Node(q)))
-
-
+let rec histo_head_aux :hydra->int->int->int list=fun h i j->if i=j then find_stage i j h get_head_lvl::[] else find_stage (i) j h get_head_lvl::histo_head_aux h (i+1) j
+let _=find_stage 0 1 my_h get_head_lvl
+let histogram_heads :hydra->int list=fun h->reverse(histo_head_aux h 0 ((height h)-1)) []
 (* Écrire une fonction qui compte le nombre de têtes à chaque niveau. *)
-let rec  histogram_heads : hydra -> int list = fun h ->
-  match h with
-    Node []->[]
-  |Node(t::q)->(get_head t+(apply_to_list (get_head) (Node(q)))) ::(histogram_heads t)@(apply_son (Node(q)) histogram_heads);;
-  
-      
-let _ = histogram_heads my_hydra
-let _ = histogram_heads my_h
+let _=histogram_heads my_h  
+
 (*
    Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec 
    les contraintes décrites dans le sujet.
