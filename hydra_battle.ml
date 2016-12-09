@@ -121,7 +121,21 @@ let _=histogram_heads my_h
    Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec 
    les contraintes décrites dans le sujet.
 *)
+let rec find_stage_list h i j=match h with
+    Node[]->[]
+  |Node(t::q)->if i=j then [histo_lvl (Node(t::q))] else find_stage_list t (i+1) j@find_stage_list (Node (q)) i j
+let list_node_level =fun h i j->find_stage_list h i j@find_stage_list h (i+1) j 
+let _=list_node_level my_h 0 0
+let _=find_stage_list my_h 0 2
 
+  
+let rec sum_find h i j= find_stage i j h histo_lvl+find_stage (i+1) j h histo_lvl
+let _ =sum_find my_h 0 1
+let rec find_stage_edge i n o x a h h2 f=match h with
+    Node[]->[]
+  |Node(t::q)->if i=n then (f (Node(q)) o x) else find_stage_edge (i+1) n  (o+1+a) ((sum_find h2 0 (n-1))+1+) () t h2 f@find_stage_edge i n (o+1) (0+2) (Node q) h2 f
+
+let _=find_stage_edge 0 ((height my_h)-1) 0 1 my_h my_h name_hydra
 (*nomme la branche de l'hydre aun niveau actuel seulement*)
 let rec name_hydra:hydra->int->int->(int*int)list=fun h o x->
   match h with
