@@ -294,15 +294,14 @@ let rec left_head h x = match h with
                    
 let leftmost_head_strat : hercules_strat = fun  h  -> left_head h []   
 
-let rec highest h x = match h with
+let rec highest h x l = match h with
   |Node [] -> x@[0]
-  |Node(t::q) -> if 1+height (t) > height (Node(q)) then highest t (0::x) else match x with
-    |[] -> highest (Node(q)) [1]
-    |a::s -> highest (Node(q)) (a+1::s)
+  |Node(t::q) -> if 1+height (t) > height (Node(q)) then highest t (l::x) 0 else  highest (Node(q)) x (l+1)
+                                                                                    
 (* Écrire la stratégie choisissant une tête de hauteur maximale *)
                                                         
 let highest_head_strat : hercules_strat = fun h ->
-  highest h []
+  highest h [] 0
 
 (* Écrire une stratégie visant à choisir une tête le plus près du sol possible *)
 let closest_to_ground_strat : hercules_strat = fun h  ->
