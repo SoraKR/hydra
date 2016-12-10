@@ -304,8 +304,12 @@ let highest_head_strat : hercules_strat = fun h ->
   highest h [] 0
 
 (* Écrire une stratégie visant à choisir une tête le plus près du sol possible *)
+let rec closest h x l = match h with
+  |Node [] -> x@[0]
+  |Node(t::q) -> if 1+height (t) < height (Node(q)) then highest t (l::x) 0 else  closest (Node(q)) x (l+1)
+                                                                                    
 let closest_to_ground_strat : hercules_strat = fun h  ->
-  failwith "A écrire"
+  closest h [] 0
 
 (* En apprenant à utiliser la bibliothèque Random, écrire une stratégie pour choisir une tête au hasard *)
 let random_strat : hercules_strat = fun h ->
