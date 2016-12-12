@@ -304,16 +304,27 @@ let highest_head_strat : hercules_strat = fun h ->
   highest h [] 0
 
 (* Écrire une stratégie visant à choisir une tête le plus près du sol possible *)
+let rec down h = match h with
+  |Node [] -> 1
+  |Node(t::q) ->  if q = [] then 1 + (down t) else min (down t) (down (Node(q))) 
 let rec closest h x l = match h with
   |Node [] -> x@[0]
-  |Node(t::q) -> if 1+height (t) < height (Node(q)) then highest t (l::x) 0 else  closest (Node(q)) x (l+1)
+  |Node(t::q) -> if 1+down (t) < down (Node(q)) then closest t (l::x) 0 else  closest (Node(q)) x (l+1)
                                                                                     
 let closest_to_ground_strat : hercules_strat = fun h  ->
   closest h [] 0
 
 (* En apprenant à utiliser la bibliothèque Random, écrire une stratégie pour choisir une tête au hasard *)
-let random_strat : hercules_strat = fun h ->
-  failwith "A écrire"
+let rec nb_les_filles h = match (les_filles h) with
+  |[] -> 0
+  |t::q -> 1+nb_les_filles (Node(q))
+
+let rec rand h x y z = match h with
+  |Node [] -> x
+  |Node(t::q) -> if z = 0 then rand t (y::x) 0 (Random.int(nb_les_filles(t))) else rand (Node(q)) x (y+1) (z-1)
+                                                                                     
+let random_strat : hercules_strat = fun h -> rand h [] 0 (Random.int (nb_les_filles(h)))  
+  
 
 (* Étant donnée une date, l'Hydre peut calculer un nombre de réplications >= 1 *)
 
