@@ -210,6 +210,7 @@ let show_hydra h =
   let _ = hydra_to_dot h "tmp.dot" in
   Unix.system command
 
+ let _=show_hydra my_h
 (*
    Pour désigner un noeud ou une tête, on utilise une notation dite "de Dewey" : le chemin d'accés à un noeud
    est une liste d'indices qui représente le chemin à suivre depuis la racine ("le pied", si on préfère).
@@ -318,6 +319,7 @@ let rec highest h x l = match h with
 let highest_head_strat : hercules_strat = fun h -> highest h [] 0
 
 (* Écrire une stratégie visant à choisir une tête le plus près du sol possible *)
+
 let rec down h = match h with
   |Node [] -> 1
   |Node(t::q) ->  if q = [] then 1 + (down t) else 1+min (down t) (down (Node(q)))
