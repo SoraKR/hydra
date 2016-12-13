@@ -148,7 +148,7 @@ let rec count_hydra:hydra->int->int=fun h o->match h with
 
 let rec name_stage i n o x h l l' f=match h with
     Node[]->[]
-  |Node(t::q)->if ((i=n)&&(o=x)) then (f(Node(q)) (o-1) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>=1) then sum_list (l') 0 (i+1) else o+1 ) (x+(List.hd l)) t (List.tl l) l' f@name_stage i n (o+1) (x+(List.hd l)) (Node q) (List.tl l) l' f
+  |Node(t::q)->if ((i=n)&&(o=x)) then (f(Node(q)) (o-1) x) else if ((i=n)&&(o>x))then (f(Node(q)) (o-2) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>=1) then sum_list (l') 0 (i+1) else o+1 ) (x+(List.hd l)) t (List.tl l) l' f@name_stage i n (o+1) (x+(List.hd l)) (Node q) (List.tl l) l' f
 
 let _=let h=single(single(single(single(head)))) in  ((list_node_level h 0 0 ((height h))))
 let _=let h= (single(single(single(single(head))))) in name_stage 0 3 0 1 h ((list_node_level h 0 0 ((height h)))) ((list_node_level h 0 0((height h)))) name_hydra
@@ -342,7 +342,7 @@ let rec rand h x y z = match h with
 
 
 let random_strat : hercules_strat = fun h -> rand h [] 0 0
-
+let _=random_strat my_h
 
 (* Étant donnée une date, l'Hydre peut calculer un nombre de réplications >= 1 *)
 
@@ -403,6 +403,8 @@ let _ = closest_to_ground_strat(yet_another_hydra)
 let _ = random_strat(example_hydra)
 
 let _ = down yet_another_hydra
+
+let _ = hydra_edges yet_another_hydra
 
 let _ = height example_shallow
 
