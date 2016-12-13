@@ -130,13 +130,6 @@ let _=list_node_level my_h 0 0 ((height my_h)-1)
 let _=find_stage_list my_h 0 0
 
 
-let rec sum_find h i j= find_stage i j h histo_lvl+find_stage (i+1) j h histo_lvl
-let _ =sum_find my_h 0 0
-let rec find_stage_edge i n o x h h2 f=match h with
-    Node[]->[]
-  |Node(t::q)->if i=n then (f (Node(q)) o x) else find_stage_edge (i+1) n  (o+1) ((sum_find h2 0 (n-1))+1) t h2 f@find_stage_edge i n (o+1) (0+2) (Node q) h2 f
-
-let _=find_stage_edge 0 ((height my_h)-1) 0 1 my_h my_h name_hydra
 (*nomme la branche de l'hydre aun niveau actuel seulement*)
 let rec name_hydra:hydra->int->int->(int*int)list=fun h o x->
   match h with
