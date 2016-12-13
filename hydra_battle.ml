@@ -67,7 +67,7 @@ let _ = size  my_h
 
 let rec height : hydra -> int = fun h ->
   match h with
-    Node [] -> 1
+    Node [] -> 0
   |Node(t::q) -> if q = [] then 1 + (height t) else max (1+height t) (height (Node(q)))
 
 let _ = height small_hydra
@@ -125,7 +125,7 @@ let _=histogram_heads my_h
 let rec find_stage_list h i j=match h with
   |Node[]->[]
   |Node(t::q)->if i=j then [histo_lvl (Node(t::q))] else find_stage_list t (i+1) j@find_stage_list (Node (q)) i j
-let list_node_level =fun h i j n->if j=n then find_stage_list h i j else find_stage_list h i j@list_node_level h i (j+1) (height h)
+let rec list_node_level =fun h i j n->if j=n then find_stage_list h i j else find_stage_list h i j@list_node_level h i (j+1) (height h)
 let _=list_node_level my_h 0 0 ((height my_h)-1)
 let _=find_stage_list my_h 0 0
 
@@ -151,22 +151,25 @@ let rec count_hydra:hydra->int->int=fun h o->match h with
     Node []->o
   |Node (t::q)->1+count_hydra(Node q) o
 
-     let _=sum_list (list_node_level my_h 0 0((height my_h)-1)) 0 1
+     let _=sum_list (list_node_level my_h 0 0((height my_h))) 0 0
 
 let rec name_stage i n o x h l l' f=match h with
     Node[]->[]
-  |Node(t::q)->if i=n then (f (Node(q)) o x) else name_stage (i+1) n  (if(i=1) then sum_list l' 0 (i+1) else o+1 ) (x+(List.hd l)) t (List.tl l) l' f@name_stage i n (o+1) (x+(List.hd l)) (Node q) (List.tl l) l' f
+  |Node(t::q)->if ((i=n)&&(o=x)) then (f(Node(q)) (o-1) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>=1) then sum_list (l') 0 (i+1) else o+1 ) (x+(List.hd l)) t (List.tl l) l' f@name_stage i n (o+1) (x+(List.hd l)) (Node q) (List.tl l) l' f
 
-let _=let h= (my_h) in name_stage 0 2 0 1 h ((list_node_level h 0 0 ((height h)-1))) ((list_node_level h 0 0((height h)-1))) name_hydra
-let _=height (my_h)
-let rec create_edges j stop list h=if j=stop then name_stage 0 j 0 1 h list list name_hydra else name_stage 0 j 0 1 h list list name_hydra@ create_edges (j+1) stop list h
+let _=let h=single(single(single(single(head)))) in  ((list_node_level h 0 0 ((height h))))
+let _=let h= (single(single(single(single(head))))) in name_stage 0 3 0 1 h ((list_node_level h 0 0 ((height h)))) ((list_node_level h 0 0((height h)))) name_hydra
+let _=let h= (my_h) in name_stage 0 2 0 1 h ((list_node_level h 0 0 ((height h)))) ((list_node_level h 0 0((height h)))) name_hydra
 
-let _=let h=(bi head head) in create_edges 0 ((height h)-1) (list_node_level h 0 0((height h)-1)) h
+let _=height (single(single(single(head))))
+let rec create_edges j stop list h=if j=(stop-1) then name_stage 0 j 0 1 h list list name_hydra else name_stage 0 j 0 1 h list list name_hydra@ create_edges (j+1) stop list h
+
+let _=let h=(bi head head) in create_edges 0 ((height h)) (list_node_level h 0 0((height h))) h
 let _=height (another_hydra)
-let hydra_edges : hydra -> (int * int) list = fun h ->create_edges 0 (((height h)-1)) (list_node_level h 0 0((height h))) h
+let hydra_edges : hydra -> (int * int) list = fun h ->create_edges 0 (((height h))) (list_node_level h 0 0((height h))) h
 
 
-let _=hydra_edges (single (single(single(single(head)))))
+let _=hydra_edges (single(single(single(single(single(single(head)))))))
 (*
    Affiche une hydre h.
    Prérequis : la fonction hydra_edges doit avoir été écrite.
