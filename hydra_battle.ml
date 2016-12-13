@@ -146,23 +146,17 @@ let rec count_hydra:hydra->int->int=fun h o->match h with
 
      let _=sum_list (list_node_level my_h 0 0((height my_h))) 0 0
 
-let rec name_stage i n o x h l l' f=match h with
+let rec name_stage i n o x h l l2 l' f= match h with
     Node[]->[]
-  |Node(t::q)->if ((i=n)&&(o=x)) then (f(Node(q)) (o-1) x) else if ((i=n)&&(o>x))then (f(Node(q)) (o-2) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>=1) then sum_list (l') 0 (i+1) else o+1 ) (x+(List.hd l)) t (List.tl l) l' f@name_stage i n (o+1) (x+(List.hd l)) (Node q) (List.tl l) l' f
+  |Node(t::q)-> if ((i=n)&&(o>=x))then (f(Node(q)) (o-((o-x)+1)) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>0) then sum_list (l2) 0 (i) else o+1 ) ((sum_list (l2) 0 i)+1) t (List.tl l) l2 l' f@name_stage i n (o+1) (sum_list (l') 0 i) (Node q) (List.tl l) l2 l' f
 
-let _=let h=single(single(single(single(head)))) in  ((list_node_level h 0 0 ((height h))))
-let _=let h= (single(single(single(single(head))))) in name_stage 0 3 0 1 h ((list_node_level h 0 0 ((height h)))) ((list_node_level h 0 0((height h)))) name_hydra
-let _=let h= (my_h) in name_stage 0 2 0 1 h ((list_node_level h 0 0 ((height h)))) ((list_node_level h 0 0((height h)))) name_hydra
+let rec create_edges j stop list h=let l2=histogramme h in if j=(stop-1) then name_stage 0 j 0 1 h list l2 list name_hydra else name_stage 0 j 0 1 h list l2 list name_hydra@ create_edges (j+1) stop list  h
 
-let _=height (single(single(single(head))))
-let rec create_edges j stop list h=if j=(stop-1) then name_stage 0 j 0 1 h list list name_hydra else name_stage 0 j 0 1 h list list name_hydra@ create_edges (j+1) stop list h
-
-let _=let h=(bi head head) in create_edges 0 ((height h)) (list_node_level h 0 0((height h))) h
-let _=height (another_hydra)
 let hydra_edges : hydra -> (int * int) list = fun h ->create_edges 0 (((height h))) (list_node_level h 0 0((height h))) h
 
 
-let _=hydra_edges (single(single(single(single(single(single(head)))))))
+let _=hydra_edges example_hydra
+let _=hydra_edges my_h
 (*
    Affiche une hydre h.
    Prérequis : la fonction hydra_edges doit avoir été écrite.
@@ -336,13 +330,13 @@ let rec nb_les_filles h = match (les_filles h) with
   |[] -> 0
   |t::q -> 1+nb_les_filles (Node(q))
 
+let _=Random.self_init();;
+
 let rec rand h x y z = match h with
   |Node [] -> x
-  |Node(t::q) -> if z = 0 then rand t (y::x) 0 (Random.int(nb_les_filles(t))) else rand (Node(q)) x (y+1) (z-1)
-
+  |Node(t::q) -> if z = 0 then rand t (y::x) 0 (if(nb_les_filles(t)=0) then 0 else Random.int (nb_les_filles(t))) else rand (Node(q)) x (y+1) (z-1)
 
 let random_strat : hercules_strat = fun h -> rand h [] 0 0
-let _=random_strat my_h
 
 (* Étant donnée une date, l'Hydre peut calculer un nombre de réplications >= 1 *)
 
@@ -401,6 +395,8 @@ let _ = highest_head_strat(example_shallow)
 let _ = closest_to_ground_strat(yet_another_hydra)
 
 let _ = random_strat(example_hydra)
+
+let _= hydra_edges (example_hydra)
 
 let _ = down yet_another_hydra
 
