@@ -328,7 +328,7 @@ let rec down h = match h with
 
 let rec closest h x l = match h with
   |Node [] -> x@[0]
-  |Node(t::q) ->if q = [] then closest t (x@[l]) 0 else if down (t) < down (Node(q)) then closest t (x@[l]) 0 else  closest (Node(q)) x (l+1)
+  |Node(t::q) ->if q = [] then closest t (x@[l]) 0 else if 1+down (t) < down (Node(q)) then closest t (x@[l]) 0 else  closest (Node(q)) x (l+1)
 
 let closest_to_ground_strat : hercules_strat = fun h  ->
   closest h [] 0
@@ -408,7 +408,7 @@ let _ = down yet_another_hydra
 
 let _ = height example_shallow
 
-let _ = shallow_replication (leftmost_head_strat example_shallow) example_shallow 1
+let _ = shallow_replication (closest_to_ground_strat example_shallow) example_shallow 1
 
 let _ = closest_to_ground_strat(example_shallow)
 
