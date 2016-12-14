@@ -148,13 +148,13 @@ let rec count_hydra:hydra->int->int=fun h o->match h with
 
 let rec name_stage i n o x h l l2 l' f= match h with
     Node[]->[]
-  |Node(t::q)-> if ((i=n)&&(o>=x))then (f(Node(q)) (o-((o-x)+1)) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>0) then sum_list (l2) 0 (i) else o+1 ) ((sum_list (l2) 0 i)+1) t (List.tl l) l2 l' f@name_stage i n (o+1) (sum_list (l') 0 i) (Node q) (List.tl l) l2 l' f
+  |Node(t::q)-> if ((i=n)&&(o>=x))then (f(Node(q)) (o-((o-x)+1)) x) else if(i=n) then  (f (Node(q)) o x) else name_stage (i+1) n  (if(i>0) then (if i=2 then (sum_list (l') 0 i+1)-1 else (sum_list (l2) 0 i)) else o+1 )((sum_list (l2) 0 i)+1) t (List.tl l) l2 l' f@name_stage i n (o+1) (if i=0 then (x+List.hd l)+2 else(sum_list (l') 0 i)) (Node q) (List.tl l) l2 l' f
 
 let rec create_edges j stop list h=let l2=histogramme h in if j=(stop-1) then name_stage 0 j 0 1 h list l2 list name_hydra else name_stage 0 j 0 1 h list l2 list name_hydra@ create_edges (j+1) stop list  h
 
 let hydra_edges : hydra -> (int * int) list = fun h ->create_edges 0 (((height h))) (list_node_level h 0 0((height h))) h
 
-
+let _=histogramme example_hydra
 let _=hydra_edges example_hydra
 let _=hydra_edges my_h
 (*
