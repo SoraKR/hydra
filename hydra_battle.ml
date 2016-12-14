@@ -481,10 +481,8 @@ let _ = make_trace  size (Battle_kind(deep_replication,leftmost_head_strat, orig
 
 let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, original_hydra_strat)) example_shallow (Time 7)
 
-<<<<<<< HEAD
 let _=compare_hydra example_hydra example_hydra
 
 let _=compare_hydra example_hydra my_h
-=======
+
 let _ = right_most_head(small_hydra)
->>>>>>> f743176aeffa6ebe2e8423e43e1c1dfe0851351e
