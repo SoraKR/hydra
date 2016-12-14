@@ -150,14 +150,8 @@ let rec name_stage i n o x h l l2 l' f= match h with
     Node[]->[]
   |Node(t::q)-> if ((i=n)&&(o>=x))then (f(Node(q)) (o-((o-x)+1)) x) else if(i=n) then  (f (Node(q)) o (x)) else name_stage (i+1) n  (if(i>0) then (if i=2 then (sum_list (l') 0 i+1)-1 else (sum_list (l2) 0 i)) else o+1 )((sum_list (l2) 0 i)+1) t (List.tl l) l2 l' f@name_stage i n (o+1) (x+List.hd l) (Node q) (List.tl l) l2 l' f
 
-let rec name_stage2 i n o x h l l2 l' f= match h with
-    Node[]->[]
-  |Node(t::q)-> if ((i=n)&&(o>=x)) then (f(Node(q)) (o-((o-x)+1)) x) else if(i=n) then (f (Node(q)) o x) else name_stage2 (i+1) n (o++1)
 
-
-let _=name_stage2 0 0 0 1 my_h (list_node_level my_h 0 0((height my_h))) (histogramme my_h) (list_node_level my_h 0 0((height my_h))) name_hydra
-
-let rec create_edges j stop list h=let l2=histogramme h in if j=(stop-1) then name_stage2 0 j 0 1 h (list) (l2) (list) name_hydra else name_stage2 0 j 0 1 h list l2 list name_hydra@ create_edges (j+1) stop list  h
+let rec create_edges j stop list h=let l2=histogramme h in if j=(stop-1) then name_stage 0 j 0 1 h (list) (l2) (list) name_hydra else name_stage 0 j 0 1 h list l2 list name_hydra@ create_edges (j+1) stop list  h
 
 let hydra_edges : hydra -> (int * int) list = fun h ->create_edges 0 (((height h))) (list_node_level h 0 0((height h))) h
 
@@ -396,6 +390,17 @@ let make_trace : (hydra -> 'a) -> genre_de_bataille -> hydra -> time -> 'a list 
   fun measure (Battle_kind(replication,hercules_strat, hydra_strat)) initial_hydra (Time duration) ->
   trace measure (Battle_kind(replication,hercules_strat, hydra_strat)) initial_hydra (Time duration) [] (hydra_strat(Time(0)))
 
+(* fonction de comparaison entre deux hydres. Deux hydres se ressemble même si certaines branches sont commutés cad que ce qui importe c'est le nombre de noeuds à chaque niveau par branches ainsi que la même hauteur de ces branches. Nous allons transformer chaque niveau en liste de noeuds, faire un Sort pour avoir dans l'ordre croissant le nombre de noeuds, ainsi on évite les mauvaises comparaisons. Si les niveaux sont semblables alors les listes de noeuds renverront true.Par rapport à la gestion de la hauteur, elle sera démontré par la liste de noeuds plus grande que l'autre liste. Néanmoins il exite le cas qu'un sous-hydre soit commutée dans une branche cousine plutôt que voisine. Dans ce cas cet algorithme ne pourra pas démontrer que les deux hydres sont parfaitement égaux. Est ce qu'une commutation par branche cousines est considérée comme une non ressemblance? à vous de me le dire.*)
+let rec compare_list l1 l2=match (l1,l2) with
+   ([],[])->true
+  |(_,[])->false
+  |([],_)->false
+  |(a::b,c::d)->if a!=c then false else compare_list b d
+
+let  compare_hydra h1 h2:bool=let f =(fun x y->if (x=y)then 0 else if x<y then -1 else 1) in compare_list (List.sort f (list_node_level h1 0 0 ((height h1)-1))) (List.sort f (list_node_level h2 0 0 ((height h2)-1)))&&(height h1=height h2)
+
+
+
 (* Écrire ici vos tests *)
 let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(1000))
 
@@ -462,3 +467,7 @@ let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, o
 let _ = make_trace  size (Battle_kind(deep_replication,leftmost_head_strat, original_hydra_strat)) example_hydra (Time 7)
 
 let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, original_hydra_strat)) example_shallow (Time 7)
+
+let _=compare_hydra example_hydra example_hydra
+
+let _=compare_hydra example_hydra my_h
