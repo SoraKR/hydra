@@ -292,20 +292,20 @@ let check_hercules_strategy : hercules_strat -> hydra -> bool = fun strat  h  ->
 
 
 let rec left_head h x = match h with
-  |Node [] -> 0::x
+  |Node [] -> x
   |Node(t::q) -> left_head t (0::x)
 (* Écrire la stratégie choisissant la tête la plus à gauche *)
 
 let leftmost_head_strat : hercules_strat = fun  h  -> left_head h []
-(*Initialisation: Pour une hydre de taille 1,la seule et unique tếte sera donnée par le chemin dans la liste 0 et on peut le voir, Node [] -> 0::x
+(*Initialisation: Pour une hydre de taille 1,la seule et unique tếte sera donnée par le chemin dans la liste 0 et on peut le voir, à travers left_head t(0::x)
 
 Hérédité: On considère que pour l'hydre de taille n, on a bien la tete laplus à gauche, on vérifie pour n+1, on a donc un match dans la fonction left_head si à n+1 on arrive à une tête, on aura bien la tête la plus à gauche avec 0 sinon on aura aussi 0 si on est encore à un noeud donc on se dirige toujours le plus à gauche donc la rpriété est vraie au rang n+1 donc elle est vraie
 
 La compléxité de la fonction est linéaire car elle dépend de la hauteur de la tête la plus à gauche, en effet il y aura autant de tour que possibles jusqu''à ce que l'on tombe sur Node [], unne tête  *)
 
 let rec highest h x l = match h with
-  |Node [] -> x@[l]
-  |Node(t::q) -> if q = [] then highest t (x@[l]) 0 else if 1+height (t) > height (Node(q)) then highest t (l::x) 0 else  highest (Node(q)) x (l+1)
+  |Node [] -> x
+  |Node(t::q) -> if q = [] then highest t (x@[l]) 0 else if 1+height (t) > height (Node(q)) then highest t (x@[l]) 0 else  highest (Node(q)) x (l+1)
 
 
 (* Écrire la stratégie choisissant une tête de hauteur maximale *)
@@ -319,7 +319,7 @@ let rec down h = match h with
   |Node(t::q) ->  if q = [] then 1 + (down t) else 1+min (down t) (down (Node(q)))
 
 let rec closest h x l = match h with
-  |Node [] -> x@[0]
+  |Node [] -> x
   |Node(t::q) ->if q = [] then closest t (x@[l]) 0 else if 1+down (t) < down (Node(q)) then closest t (x@[l]) 0 else  closest (Node(q)) x (l+1)
 
 let closest_to_ground_strat : hercules_strat = fun h  ->
@@ -334,9 +334,9 @@ let _=Random.self_init();;
 
 let rec rand h x y z = match h with
   |Node [] -> x
-  |Node(t::q) -> if z = 0 then rand t (y::x) 0 (if(nb_les_filles(t)=0) then 0 else Random.int (nb_les_filles(t))) else rand (Node(q)) x (y+1) (z-1)
+  |Node(t::q) -> if z = 0 then rand t (x@[y]) 0 (if(nb_les_filles(t)=0) then 0 else Random.int (nb_les_filles(t))) else rand (Node(q)) x (y+1) (z-1)
 
-let random_strat : hercules_strat = fun h -> rand h [] 0 0
+let random_strat : hercules_strat = fun h -> rand h [] 0 (Random.int(nb_les_filles(h)))
 
 (* Étant donnée une date, l'Hydre peut calculer un nombre de réplications >= 1 *)
 
@@ -385,14 +385,21 @@ let make_trace : (hydra -> 'a) -> genre_de_bataille -> hydra -> time -> 'a list 
   failwith "A écrire"
 
 (* Écrire ici vos tests *)
-let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(1))
+let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(4))
+
+let _ = simulation (Battle_kind(deep_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(10))
+
+let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) example_shallow (Time(10))
 
 let _ = leftmost_head_strat example_shallow
+
 let _ = check_hercules_strategy (highest_head_strat) example_shallow
 
-let _ = highest_head_strat(example_shallow)
+let _ = highest_head_strat(example_hydra)
 
 let _ = closest_to_ground_strat(yet_another_hydra)
+
+let _ = random_strat(example_shallow)
 
 let _ = random_strat(example_hydra)
 
@@ -404,16 +411,36 @@ let _ = hydra_edges yet_another_hydra
 
 let _ = height example_shallow
 
-let _ = shallow_replication (closest_to_ground_strat example_shallow) example_shallow 1
+let _ = shallow_replication (random_strat example_shallow) example_shallow 1
 
 let _ = closest_to_ground_strat(example_shallow)
 
-let _ = check_hercules_strategy(closest_to_ground_strat) example_shallow
+let _ = check_hercules_strategy(random_strat) example_shallow
 
-let _ = check_hercules_strategy(closest_to_ground_strat) example_hydra
+let _ = check_hercules_strategy(random_strat) example_hydra
 
 let _ = closest_to_ground_strat example_hydra
 
 let _ = Random.int(15)
 
 let _ = closest_to_ground_strat(example_deep_two_copies)
+
+let _ = shallow_replication [0] example_hydra 1
+
+let _ = shallow_replication (closest_to_ground_strat example_hydra) example_hydra 1
+
+let _ = shallow_replication (highest_head_strat example_hydra) example_hydra 1
+
+let _ = deep_replication (leftmost_head_strat example_hydra) example_hydra 1
+
+let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) small_hydra (Time(4))
+
+let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) very_small_hydra (Time(4))
+
+let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) yet_another_hydra (Time(10))
+
+let _ = simulation (Battle_kind(shallow_replication,closest_to_ground_strat,original_hydra_strat)) small_hydra (Time(10))
+
+let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(2))
+
+let _ = simulation (Battle_kind(shallow_replication,random_strat,original_hydra_strat)) very_small_hydra (Time(4))
