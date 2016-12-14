@@ -386,14 +386,20 @@ let simulation : genre_de_bataille -> hydra -> time -> result =
    des valeurs de la fonction measure sur les hydres obtenues en partant de l'hydre h_init et
    en effectuant t tours de la bataille de genre bat.
 *)
+
+let rec trace :  (hydra -> 'a) -> genre_de_bataille -> hydra -> time -> 'a list -> int -> 'a list =
+  fun measure (Battle_kind(replication,hercules_strat, hydra_strat)) initial_hydra (Time duration) l nb_repli -> match initial_hydra with
+    |Node [] -> (measure(initial_hydra)::l)
+    |Node(t::q) -> if duration = 0 then (measure(initial_hydra)::l) else trace measure (Battle_kind(replication,hercules_strat,hydra_strat)) (replication (hercules_strat initial_hydra) initial_hydra nb_repli) (Time(duration-1)) ((measure (initial_hydra))::l) (hydra_strat(Time(nb_repli)))
+
 let make_trace : (hydra -> 'a) -> genre_de_bataille -> hydra -> time -> 'a list =
   fun measure (Battle_kind(replication,hercules_strat, hydra_strat)) initial_hydra (Time duration) ->
-  failwith "A écrire"
+  trace measure (Battle_kind(replication,hercules_strat, hydra_strat)) initial_hydra (Time duration) [] (hydra_strat(Time(0)))
 
 (* Écrire ici vos tests *)
-let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(4))
+let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(1000))
 
-let _ = simulation (Battle_kind(deep_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(10))
+let _ = simulation (Battle_kind(deep_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(100))
 
 let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) example_shallow (Time(10))
 
@@ -450,3 +456,9 @@ let _ = simulation (Battle_kind(shallow_replication,closest_to_ground_strat,orig
 let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(2))
 
 let _ = simulation (Battle_kind(shallow_replication,random_strat,original_hydra_strat)) very_small_hydra (Time(4))
+
+let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, original_hydra_strat)) example_hydra (Time 7)
+
+let _ = make_trace  size (Battle_kind(deep_replication,leftmost_head_strat, original_hydra_strat)) example_hydra (Time 7)
+
+let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, original_hydra_strat)) example_shallow (Time 7)
