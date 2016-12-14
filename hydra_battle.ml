@@ -1,5 +1,7 @@
 (** Hydra Battles *)
 
+(*Rakotoarijaona Camille & Mahazoasy Heritiana Allan*)
+
 (* Message utilisé lorsqu'un bug est détecté – par exemple, dans les fonctions de réplication *)
 
 let the_msg = "ouah, le bug!"
@@ -304,6 +306,7 @@ Hérédité: On considère que pour l'hydre de taille n, on a bien la tete laplu
 La compléxité de la fonction est linéaire car elle dépend de la hauteur de la tête la plus à gauche, en effet il y aura autant de tour que possibles jusqu''à ce que l'on tombe sur Node [], unne tête  *)
 
 (*Extension: Stratégie de tête la plus à droite*)
+
 let rec right_head h x c = match h with
   |Node [] -> x
   |Node(t::q) -> if q = [] then right_head t (x@[c]) 0 else right_head (Node(q)) x (c+1)
@@ -451,8 +454,6 @@ let _ = check_hercules_strategy(random_strat) example_hydra
 
 let _ = closest_to_ground_strat example_hydra
 
-let _ = Random.int(15)
-
 let _ = closest_to_ground_strat(example_deep_two_copies)
 
 let _ = shallow_replication [0] example_hydra 1
@@ -481,8 +482,8 @@ let _ = make_trace  size (Battle_kind(deep_replication,leftmost_head_strat, orig
 
 let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, original_hydra_strat)) example_shallow (Time 7)
 
-let _=compare_hydra example_hydra example_hydra
+let _= compare_hydra example_hydra example_hydra
 
-let _=compare_hydra example_hydra my_h
+let _= compare_hydra example_hydra my_h
 
 let _ = right_most_head(small_hydra)
