@@ -299,9 +299,22 @@ let rec left_head h x = match h with
 let leftmost_head_strat : hercules_strat = fun  h  -> left_head h []
 (*Initialisation: Pour une hydre de taille 1,la seule et unique tếte sera donnée par le chemin dans la liste 0 et on peut le voir, à travers left_head t(0::x)
 
-Hérédité: On considère que pour l'hydre de taille n, on a bien la tete laplus à gauche, on vérifie pour n+1, on a donc un match dans la fonction left_head si à n+1 on arrive à une tête, on aura bien la tête la plus à gauche avec 0 sinon on aura aussi 0 si on est encore à un noeud donc on se dirige toujours le plus à gauche donc la rpriété est vraie au rang n+1 donc elle est vraie
+Hérédité: On considère que pour l'hydre de taille n, on a bien la tete laplus à gauche, on vérifie pour n+1, on a donc un match dans la fonction left_head si à n+1 on arrive à une tête, on aura x, car on est arrivé sinon on aura aussi 0 si on est encore à un noeud donc on se dirige toujours le plus à gauche donc la propriété est vraie au rang n+1 donc elle est vraie
 
 La compléxité de la fonction est linéaire car elle dépend de la hauteur de la tête la plus à gauche, en effet il y aura autant de tour que possibles jusqu''à ce que l'on tombe sur Node [], unne tête  *)
+
+(*Extension: Stratégie de tête la plus à droite*)
+let rec right_head h x c = match h with
+  |Node [] -> x
+  |Node(t::q) -> if q = [] then right_head t (x@[c]) 0 else right_head (Node(q)) x (c+1)
+let right_most_head : hercules_strat = fun h -> right_head h [] 0
+
+(*Démonstration:
+Initialisation: Pour une hydre de taille 1,la seule et unique tếte sera donnée par le chemin dans la liste 0 et on peut le voir, à travers right_head, on a x[c] seulement si on arrive au noeud le plus à droit
+
+Hérédité: On considère que pour l'hydre de taille n, on a bien la tete laplus à droite, on vérifie pour n+1, on a donc un match dans la fonction right_head si à n+1 on arrive à une tête, on aura bien x car on est arrivé sinon on aura encore un noeud donc on se dirige toujours le plus à droite donc la propriété est vraie au rang n+1 donc elle est vraie
+
+La compléxité de la fonction est linéaire car elle dépend de la hauteur de la tête la plus à droite, en effet il y aura autant de tour que possibles jusqu''à ce que l'on tombe sur Node [], unne tête   *)
 
 let rec highest h x l = match h with
   |Node [] -> x
@@ -402,7 +415,7 @@ let  compare_hydra h1 h2:bool=let f =(fun x y->if (x=y)then 0 else if x<y then -
 
 
 (* Écrire ici vos tests *)
-let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(1000))
+let _ = simulation (Battle_kind(deep_replication,leftmost_head_strat,original_hydra_strat)) example_hydra (Time(100))
 
 let _ = simulation (Battle_kind(deep_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(100))
 
@@ -458,7 +471,7 @@ let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_
 
 let _ = simulation (Battle_kind(shallow_replication,closest_to_ground_strat,original_hydra_strat)) small_hydra (Time(10))
 
-let _ = simulation (Battle_kind(shallow_replication,highest_head_strat,original_hydra_strat)) example_hydra (Time(2))
+let _ = simulation (Battle_kind(shallow_replication,right_most_head,original_hydra_strat)) example_hydra (Time(5))
 
 let _ = simulation (Battle_kind(shallow_replication,random_strat,original_hydra_strat)) very_small_hydra (Time(4))
 
@@ -468,6 +481,10 @@ let _ = make_trace  size (Battle_kind(deep_replication,leftmost_head_strat, orig
 
 let _ = make_trace  size (Battle_kind(shallow_replication,leftmost_head_strat, original_hydra_strat)) example_shallow (Time 7)
 
+<<<<<<< HEAD
 let _=compare_hydra example_hydra example_hydra
 
 let _=compare_hydra example_hydra my_h
+=======
+let _ = right_most_head(small_hydra)
+>>>>>>> f743176aeffa6ebe2e8423e43e1c1dfe0851351e
