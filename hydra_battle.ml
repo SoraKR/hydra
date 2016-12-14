@@ -1,4 +1,4 @@
-(** Hydra Battles *)
+(** Hydra Battles  *)
 
 (*Rakotoarijaona Camille & Mahazoasy Heritiana Allan*)
 
